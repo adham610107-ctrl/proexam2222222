@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Adham's Pro Exam System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode" id="main-body"> <!-- Default Eye Comfort -->
+
+    <nav class="global-nav hidden" id="global-nav">
+        <div class="logo-area" onclick="goHome()" title="Bosh sahifa">
+            <img src="logo.png" alt="Logo" class="nav-logo" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+            <span class="logo-text">PRO EXAM <span class="badge">v6.0</span></span>
+        </div>
+        <div class="nav-right">
+            <button id="exit-test-btn" class="exit-mini hidden" onclick="exitToHome()">🚪 Chiqish</button>
+            <div id="exam-timer" class="timer-badge hidden">15:00</div>
+            <button onclick="toggleTheme()" class="theme-btn" title="Tungi/Kungi rejim">🌗</button>
+        </div>
+    </nav>
+
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay">
+            <div class="hero-card glass-effect slide-up">
+                <div class="hero-badge">Shaxsiy Loyiha</div>
+                <h1 class="main-title">Xush kelibsiz!</h1>
+                <p class="hero-subtitle">
+                    Ushbu platforma mening shaxsiy loyiham bo'lib, sizni sinovlarga mukammal tayyorlash va bilimlaringizni amalda tekshirish imkoniyatini beradi.<br><br>
+                    <b>Talabalar uchun maxsus ishlab chiqilgan professional tayyorgarlik tizimi.</b> Barcha qonun-qoidalar va test bazasi sizning o'sishingiz uchun yo'naltirilgan.
+                </p>
+                
+                <div class="login-form mt-20">
+                    <input type="text" id="student-name" class="premium-input" placeholder="Ismingizni kiriting..." autocomplete="off">
+                    <button class="btn-start pulse" onclick="handleLogin()">Platformaga kirish</button>
+                </div>
+
+                <div class="social-links">
+                    <a href="https://t.me/atamuratovs" target="_blank" class="social-btn"><img src="tg.png" alt="TG" onerror="this.style.display='none'"></a>
+                    <a href="https://www.instagram.com/strovln" target="_blank" class="social-btn"><img src="insta.png" alt="IG" onerror="this.style.display='none'"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboard-screen" class="screen hidden">
+        <div class="container main-content">
+            <header class="dash-header slide-up">
+                <h2>Salom, <span id="display-name" class="text-primary">Talaba</span>!</h2>
+                <div class="stats-row">
+                    <div class="stat-card">O'zlashtirildi: <b id="learned-count" class="text-success">0</b> <span class="max-total">/ 800</span></div>
+                    <div class="stat-card">Xatolar: <b id="error-count" class="text-error">0</b> <span class="max-total">/ 800</span></div>
+                </div>
+            </header>
+
+            <div class="category-grid slide-up">
+                <button class="cat-btn subject-btn" onclick="openLevelsModal('musiqa_nazariyasi', 'Musiqa nazariyasi')">🎼 Musiqa nazariyasi</button>
+                <button class="cat-btn subject-btn" onclick="openLevelsModal('cholgu_ijrochiligi', 'Cholg\'u ijrochiligi')">🎻 Cholg'u ijrochiligi</button>
+                <button class="cat-btn subject-btn" onclick="openLevelsModal('vokal_ijrochiligi', 'Vokal ijrochiligi')">🎤 Vokal ijrochiligi</button>
+                <button class="cat-btn subject-btn" onclick="openLevelsModal('metodika_repertuar', 'Metodika')">📚 Metodika</button>
+                
+                <button class="cat-btn btn-special" onclick="openSetup('mixed', '1-800 Aralash')">🎲 1-800 Aralash</button>
+                <button class="cat-btn btn-outline" onclick="toggleChapters()">📑 Bo'limlar (1-800)</button>
+                <button id="error-work-btn" class="cat-btn btn-error" onclick="openSetup('errors', 'Xatolar ustida ishlash')">🛠 Xatolar ustida ishlash</button>
+                <button class="cat-btn btn-exam pulse" onclick="startExamMode()">🎓 IMTIHON (60 ta savol)</button>
+            </div>
+
+            <div id="chapters-grid" class="hidden chapters-box slide-up"></div>
+        </div>
+    </div>
+
+    <!-- Level Selection Modal -->
+    <div id="levels-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-effect slide-up">
+            <button class="modal-close" onclick="closeLevelsModal()">✖</button>
+            <h2 id="level-modal-title" class="modal-title">Fan nomi</h2>
+            <div id="levels-grid" class="levels-grid mt-20"></div>
+        </div>
+    </div>
+
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen hidden">
+        <div class="container setup-container">
+            <div class="setup-card glass-effect slide-up">
+                <h2 id="setup-title">⚙️ Test Parametrlari</h2>
+                
+                <div class="setup-group">
+                    <label>Qiyinlik darajasi (Vaqt):</label>
+                    <div class="segmented-control difficulty-control">
+                        <button class="seg-btn diff-easy active" onclick="setDifficulty('easy', this)">Oson</button>
+                        <button class="seg-btn diff-medium" onclick="setDifficulty('medium', this)">O'rtacha</button>
+                        <button class="seg-btn diff-hard" onclick="setDifficulty('hard', this)">Qiyin</button>
+                    </div>
+                </div>
+
+                <div class="setup-group">
+                    <label>Savollar tartibi:</label>
+                    <div class="segmented-control flex-col">
+                        <button class="seg-btn order-opt order-random active" onclick="setOrder('random', this)">🎲 1-20 random almashtirish</button>
+                        <button class="seg-btn order-opt order-seq" onclick="setOrder('sequential', this)">⬇️ 1-20 ketma-ketlikda</button>
+                    </div>
+                </div>
+
+                <div class="setup-actions">
+                    <button class="btn-cancel" onclick="goHome()">Orqaga</button>
+                    <button class="btn-start-test" onclick="confirmSetupAndStart()">Boshlash 🚀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Screen -->
+    <div id="test-screen" class="screen hidden">
+        <div class="progress-bar-container"><div id="progress-fill"></div></div>
+        
+        <div class="container test-layout">
+            <div class="map-container" id="map-scroll-container">
+                <div id="indicator-map" class="mini-map"></div>
+            </div>
+
+            <div class="question-container">
+                <div id="question-list-wrapper" class="q-list-wrapper">
+                    <div id="all-questions-area"></div>
+                    <div class="scroll-pad"></div> 
+                </div>
+                
+                <div class="nav-controls">
+                    <button class="nav-btn" onclick="move(-1)">⬅️ Oldingi</button>
+                    <button id="finish-btn" class="finish-btn hidden" onclick="finishExam()">Yakunlash ✔️</button>
+                    <button class="nav-btn" onclick="move(1)">Keyingi ➡️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimalist Circular Result Modal -->
+    <div id="exam-result-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-effect slide-up text-center">
+            <h2 class="modal-title mb-20">Natija</h2>
+            
+            <div class="donut-wrapper">
+                <div id="donut-chart" class="donut-chart">
+                    <span id="exam-percentage">0%</span>
+                </div>
+            </div>
+            
+            <h3 id="exam-message" class="exam-message">Xabar</h3>
+            
+            <div class="exam-stats-details">
+                To'g'ri: <span id="exam-correct-count" class="text-success">0</span> / <span id="exam-total-count">0</span>
+            </div>
+            
+            <div class="modal-actions mt-20">
+                <button class="btn-outline-modal" onclick="restartCurrentTest()">Boshqatdan yechish</button>
+                <button class="btn-start-test" onclick="exitToHome()">Chiqib ketish</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
